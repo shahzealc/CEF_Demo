@@ -63,6 +63,30 @@ void UMainUI::NativeOnInitialized()
 	if (QeraButton) {
 		QeraButton->OnClicked.AddUniqueDynamic(this, &UMainUI::handleQeraButtonClick);
 	}
+
+	_browsers = { ChatBrowser, HomeBrowser, StoreBrowser, AccountBrowser, NotificationBrowser,
+	PublishBrowser, OrderBrowser, ProjectHistoryBrowser, OrderSummaryBrowser, ObjectBrowser,
+	MEPBrowser, MaterialBrowser, QeraBrowser };
+
+}
+
+void UMainUI::_toggleBrowser(UBrowserWidget* Browser, const FString& URL)
+{
+	auto isVisible {Browser->IsVisible()};
+	for (UBrowserWidget* browser : _browsers)
+	{
+		if (browser->IsVisible()) {
+			browser->LoadURL(TEXT("about:blank"));
+			browser->HideBrowser();
+		}
+	}
+
+	if (isVisible) return;
+
+	if (!Browser->IsVisible()) {
+		Browser->LoadURL(URL);
+		Browser->ShowBrowser();
+	}
 }
 
 void UMainUI::handleSaveButtonClick()
@@ -70,135 +94,76 @@ void UMainUI::handleSaveButtonClick()
 	UE_LOG(LogTemp, Warning, TEXT("Save %s"), *TokenBox->GetText().ToString());
 	OnAccessToken.ExecuteIfBound(*TokenBox->GetText().ToString());
 
-	TArray<UBrowserWidget*> Browsers = { ChatBrowser, HomeBrowser, StoreBrowser, AccountBrowser, NotificationBrowser,
-		PublishBrowser, OrderBrowser, ProjectHistoryBrowser, OrderSummaryBrowser, ObjectBrowser,
-		MEPBrowser, MaterialBrowser, QeraBrowser };
-
-	for (UBrowserWidget* Browser : Browsers)
+	for (UBrowserWidget* browser : _browsers)
 	{
-		if (IsValid(Browser))
+		if (IsValid(browser))
 		{
-			Browser->HandleOnAccessToken(*TokenBox->GetText().ToString());
+			browser->HandleOnAccessToken(*TokenBox->GetText().ToString());
 		}
 	}
-
-	HomeBrowser->LoadURL(TEXT("https://stage-home.zurutech.online/?version=504&platform=editor&dcversion=v0.0.1"));
-	ChatBrowser->LoadURL(TEXT("https://stage-chat.zurutech.online/"));
-	StoreBrowser->LoadURL(TEXT("https://stage-website-2024.zurutech.online/store"));
-	AccountBrowser->LoadURL(TEXT("https://stage-accounts.zurutech.online/"));
-	NotificationBrowser->LoadURL(TEXT("https://stage-notification.zurutech.online/"));
-	PublishBrowser->LoadURL(TEXT("https://stage-home.zurutech.online/publish/404"));
-	OrderBrowser->LoadURL(TEXT("https://stage-home.zurutech.online/my-orders"));
-	ProjectHistoryBrowser->LoadURL(TEXT("https://stage-home.zurutech.online/version-history/404"));
-	OrderSummaryBrowser->LoadURL(TEXT("https://stage-home.zurutech.online/cart/404"));
-	ObjectBrowser->LoadURL(TEXT("https://assets-v2.zurutech.online/#/object-library"));
-	MEPBrowser->LoadURL(TEXT("https://assets-v2.zurutech.online/#/fixture-library"));
-	MaterialBrowser->LoadURL(TEXT("https://assets-v2.zurutech.online/#/material-library"));
-	QeraBrowser->LoadURL(TEXT("https://stage-home.zurutech.online/qera/"));
 }
 
 void UMainUI::handleChatButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Chat"));
-
-	if (IsValid(ChatBrowser)) {
-		ChatBrowser->IsVisible() ? ChatBrowser->HideBrowser() : ChatBrowser->ShowBrowser();
-	}
+	_toggleBrowser(ChatBrowser, TEXT("https://stage-chat.zurutech.online/"));
 }
 
 void UMainUI::handleHomeButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Home"));
-
-	if (IsValid(HomeBrowser)) {
-		HomeBrowser->IsVisible() ? HomeBrowser->HideBrowser() : HomeBrowser->ShowBrowser();
-	}
+	_toggleBrowser(HomeBrowser, TEXT("https://stage-home.zurutech.online/?version=504&platform=editor&dcversion=v0.0.1"));
 }
 
 void UMainUI::handleStoreButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Store"));
-	if (IsValid(StoreBrowser)) {
-		StoreBrowser->IsVisible() ? StoreBrowser->HideBrowser() : StoreBrowser->ShowBrowser();
-	}
+	_toggleBrowser(StoreBrowser, TEXT("https://stage-website-2024.zurutech.online/store"));
 }
 
 void UMainUI::handleAccountButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Account"));
-	if (IsValid(AccountBrowser)) {
-		AccountBrowser->IsVisible() ? AccountBrowser->HideBrowser() : AccountBrowser->ShowBrowser();
-	}
+	_toggleBrowser(AccountBrowser, TEXT("https://stage-accounts.zurutech.online/"));
 }
 
 void UMainUI::handleNotificationButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Notification"));
-	if (IsValid(NotificationBrowser)) {
-		NotificationBrowser->IsVisible() ? NotificationBrowser->HideBrowser() : NotificationBrowser->ShowBrowser();
-	}
+	_toggleBrowser(NotificationBrowser, TEXT("https://stage-notification.zurutech.online/"));
 }
 
 void UMainUI::handlePublishButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Publish"));
-	if (IsValid(PublishBrowser)) {
-		PublishBrowser->IsVisible() ? PublishBrowser->HideBrowser() : PublishBrowser->ShowBrowser();
-	}
+	_toggleBrowser(PublishBrowser, TEXT("https://stage-home.zurutech.online/publish/404"));
 }
 
 void UMainUI::handleOrderButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Order"));
-	if (IsValid(OrderBrowser)) {
-		OrderBrowser->IsVisible() ? OrderBrowser->HideBrowser() : OrderBrowser->ShowBrowser();
-	}
+	_toggleBrowser(OrderBrowser, TEXT("https://stage-home.zurutech.online/my-orders"));
 }
 
 void UMainUI::handleProjectHistoryButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Project History"));
-	if (IsValid(ProjectHistoryBrowser)) {
-		ProjectHistoryBrowser->IsVisible() ? ProjectHistoryBrowser->HideBrowser() : ProjectHistoryBrowser->ShowBrowser();
-	}
+	_toggleBrowser(ProjectHistoryBrowser, TEXT("https://stage-home.zurutech.online/version-history/404"));
 }
 
 void UMainUI::handleOrderSummaryButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Order Summary"));
-	if (IsValid(OrderSummaryBrowser)) {
-		OrderSummaryBrowser->IsVisible() ? OrderSummaryBrowser->HideBrowser() : OrderSummaryBrowser->ShowBrowser();
-	}
+	_toggleBrowser(OrderSummaryBrowser, TEXT("https://stage-home.zurutech.online/cart/404"));
 }
 
 void UMainUI::handleObjectButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Object"));
-	if (IsValid(ObjectBrowser)) {
-		ObjectBrowser->IsVisible() ? ObjectBrowser->HideBrowser() : ObjectBrowser->ShowBrowser();
-	}
+	_toggleBrowser(ObjectBrowser, TEXT("https://assets-v2.zurutech.online/#/object-library"));
 }
 
 void UMainUI::handleMEPButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("MEP"));
-	if (IsValid(MEPBrowser)) {
-		MEPBrowser->IsVisible() ? MEPBrowser->HideBrowser() : MEPBrowser->ShowBrowser();
-	}
+	_toggleBrowser(MEPBrowser, TEXT("https://assets-v2.zurutech.online/#/fixture-library"));
 }
 
 void UMainUI::handleMaterialButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Material"));
-	if (IsValid(MaterialBrowser)) {
-		MaterialBrowser->IsVisible() ? MaterialBrowser->HideBrowser() : MaterialBrowser->ShowBrowser();
-	}
+	_toggleBrowser(MaterialBrowser, TEXT("https://assets-v2.zurutech.online/#/material-library"));
 }
 
 void UMainUI::handleQeraButtonClick()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Qera"));
-	if (IsValid(QeraBrowser)) {
-		QeraBrowser->IsVisible() ? QeraBrowser->HideBrowser() : QeraBrowser->ShowBrowser();
-	}
+	_toggleBrowser(QeraBrowser, TEXT("https://stage-home.zurutech.online/qera/"));
 }

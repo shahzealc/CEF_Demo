@@ -117,12 +117,15 @@ protected:
 
 	void NativeOnInitialized() override;
 
+
 private:
 
 	bool _isChatLoaded{};
 	bool _isHomeLoaded{};
+	TArray<UBrowserWidget*> _browsers{};
 
 	bool _isTokenUpdated{};
+	void _toggleBrowser(UBrowserWidget* Browser, const FString& URL);
 
 	UFUNCTION()
 	void handleChatButtonClick();
